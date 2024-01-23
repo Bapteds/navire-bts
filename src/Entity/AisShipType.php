@@ -34,10 +34,15 @@ class AisShipType
     #[ORM\OneToMany(mappedBy: 'idaisshiptype', targetEntity: Navire::class)]
     private Collection $navires;
 
+    #[ORM\ManyToMany(targetEntity: Port::class, mappedBy: 'types')]
+    private Collection $types;
+
     public function __construct()
     {
-        $this->navires = new ArrayCollection();
+        $this->types = new ArrayCollection();
     }
+
+
 
     public function getId(): ?int
     {
@@ -97,4 +102,33 @@ class AisShipType
 
         return $this;
     }
+
+    /**
+     * @return Collection<int, Port>
+     */
+    public function getTypes(): Collection
+    {
+        return $this->types;
+    }
+
+    public function addType(Port $type): static
+    {
+        if (!$this->types->contains($type)) {
+            $this->types->add($type);
+            $type->addType($this);
+        }
+
+        return $this;
+    }
+
+    public function removeType(Port $type): static
+    {
+        if ($this->types->removeElement($type)) {
+            $type->removeType($this);
+        }
+
+        return $this;
+    }
+
+
 }
