@@ -7,6 +7,8 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: NavireRepository::class)]
+#[ORM\Index(name: 'ind_IMO', columns: ['imo'])]
+#[ORM\Index(name: 'ind_MMSI', columns: ['mmsi'])]
 class Navire {
 
     #[Assert\Unique(fields: ['imo', 'mmsi', 'indicatifAppel'])]
@@ -15,39 +17,43 @@ class Navire {
     #[ORM\Column(name: 'id')]
     private ?int $id = null;
 
-    #[ORM\Column(name: 'imo', length: 7)]
-    #[Assert\Regex('[1-9]{6}', message: 'Le numéro IMO doit être unique et composé de 7 chiffres sans commencer par 0')]
+    #[ORM\Column(name: 'imo', length: 7, unique: true)]
+    #[Assert\Regex('[1-9]{7}', message: 'Le numéro IMO doit être unique et composé de 7 chiffres sans commencer par 0')]
     private ?string $IMO = null;
 
-    #[ORM\Column(name:'nom',length: 50)]
+    #[ORM\Column(name: 'nom', length: 50)]
     #[Assert\Regex('[aA-zZ]{3,}', message: 'Le nom doit au minimum avoir 3 lettres')]
     private ?string $Nom = null;
 
-    #[ORM\Column(name:'mmsi')]
-    #[Assert\Regex('[1-9]{8}', message: 'Le numéro MMSI doit être unique et composé de 9 chiffres sans commencer par 0')]
+    #[ORM\Column(name: 'mmsi', unique: true)]
+    #[Assert\Regex('[1-9]{9}', message: 'Le numéro MMSI doit être unique et composé de 9 chiffres sans commencer par 0')]
     private ?int $MMSI = null;
 
-    #[ORM\Column(name:'indicatif',length: 10)]
-    #[Assert\Regex('[aA-zZ]{10}', message: 'Le nom doit contenir 3 lettres')]
+    #[ORM\Column(name: 'indicatif', length: 10)]
+    #[Assert\Regex('[aA-zZ]{10}', message: 'L\'indicatif doit faire 10 lettres')]
     private ?string $Indicatif = null;
 
-    #[ORM\Column(name:'eta',type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[ORM\Column(name: 'eta', type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $Eta = null;
 
-    #[ORM\Column(name:'longueur')]
+    #[ORM\Column(name: 'longueur')]
     #[Assert\Regex('[1-9]', message: 'La longueur ne peut pas être négative')]
     private ?int $longueur = null;
 
-    #[ORM\Column(name:'largeur')]
+    #[ORM\Column(name: 'largeur')]
     #[Assert\Regex('[1-9]', message: 'La largeur ne peut pas être négative')]
     private ?int $largeur = null;
 
-    #[ORM\Column(name:'tirantdeau')]
+    #[ORM\Column(name: 'tirantdeau')]
     private ?float $tirantdeau = null;
 
     #[ORM\ManyToOne(inversedBy: 'navires')]
-    #[ORM\JoinColumn(name:'idaisshiptype', referencedColumnName:'id',nullable: false)]
+    #[ORM\JoinColumn(name: 'idaisshiptype', referencedColumnName: 'id', nullable: false)]
     private ?AisShipType $idaisshiptype = null;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(name: 'idpays', referencedColumnName: 'id', nullable: false)]
+    private ?Pays $pavillon = null;
 
     public function getId(): ?int {
         return $this->id;
@@ -55,12 +61,6 @@ class Navire {
 
     public function getIMO(): ?string {
         return $this->IMO;
-    }
-
-    public function setIMO(string $IMO): static {
-        $this->IMO = $IMO;
-
-        return $this;
     }
 
     public function getNom(): ?string {
@@ -133,14 +133,22 @@ class Navire {
         return $this;
     }
 
-    public function getIdaisshiptype(): ?AisShipType
-    {
+    public function getIdaisshiptype(): ?AisShipType {
         return $this->idaisshiptype;
     }
 
-    public function setIdaisshiptype(?AisShipType $idaisshiptype): static
-    {
+    public function setIdaisshiptype(?AisShipType $idaisshiptype): static {
         $this->idaisshiptype = $idaisshiptype;
+
+        return $this;
+    }
+
+    public function getPavillon(): ?Pays {
+        return $this->pavillon;
+    }
+
+    public function setPavillon(?Pays $idpays): static {
+        $this->pavillon = $pavillon;
 
         return $this;
     }
