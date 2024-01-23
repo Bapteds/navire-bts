@@ -30,6 +30,10 @@ class Port {
     #[ORM\InverseJoinColumn(name:'idaisshiptype', referencedColumnName:'id')]
     private Collection $types;
 
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(name:'idpays',nullable: false)]
+    private ?Pays $pays = null;
+
     public function __construct() {
         $this->types = new ArrayCollection();
     }
@@ -75,6 +79,18 @@ class Port {
 
     public function removeType(AisShipType $type): static {
         $this->types->removeElement($type);
+
+        return $this;
+    }
+
+    public function getPays(): ?Pays
+    {
+        return $this->pays;
+    }
+
+    public function setPays(?Pays $pays): static
+    {
+        $this->pays = $pays;
 
         return $this;
     }
