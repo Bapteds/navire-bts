@@ -34,8 +34,12 @@ class Port {
     #[ORM\JoinColumn(name:'idpays',nullable: false)]
     private ?Pays $pays = null;
 
+    #[ORM\OneToMany(mappedBy: 'port', targetEntity: Navire::class)]
+    private Collection $navires;
+
     public function __construct() {
         $this->types = new ArrayCollection();
+        $this->navires = new ArrayCollection();
     }
 
     public function getId(): ?int {
@@ -91,6 +95,36 @@ class Port {
     public function setPays(?Pays $pays): static
     {
         $this->pays = $pays;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Navire>
+     */
+    public function getNavires(): Collection
+    {
+        return $this->navires;
+    }
+
+    public function addNavire(Navire $navire): static
+    {
+        if (!$this->navires->contains($navire)) {
+            $this->navires->add($navire);
+            $navire->setPort($this);
+        }
+
+        return $this;
+    }
+
+    public function removeNavire(Navire $navire): static
+    {
+        if ($this->navires->removeElement($navire)) {
+            // set the owning side to null (unless already changed)
+            if ($navire->getPort() === $this) {
+                $navire->setPort(null);
+            }
+        }
 
         return $this;
     }
