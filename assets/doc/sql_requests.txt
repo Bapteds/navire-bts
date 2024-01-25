@@ -1,0 +1,7 @@
+CREATE DATABASE naviresymfo;
+
+CREATE USER 'databasecreator'@'localhost' IDENTIFIED BY 'databasecreator';
+GRANT CREATE, DROP ON *.* TO 'databasecreator'@'localhost';
+
+CREATE USER 'usernavire'@'localhost' IDENTIFIED BY 'usernavire';
+GRANT ALL PRIVILEGES ON naviresymfo.* TO 'usernavire'@'localhost';
