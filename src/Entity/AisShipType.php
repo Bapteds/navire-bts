@@ -6,6 +6,8 @@ use App\Repository\AisShipTypeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Navire;
+
 
 #[ORM\Table (name:'aisshiptype')]
 #[ORM\Entity(repositoryClass: AisShipTypeRepository::class)]
@@ -35,7 +37,7 @@ class AisShipType
     private Collection $navires;
 
     #[ORM\ManyToMany(targetEntity: Port::class, mappedBy: 'types')]
-    private Collection $types;
+    private Collection $portsCompatibles;
 
     public function __construct()
     {
@@ -108,13 +110,13 @@ class AisShipType
      */
     public function getTypes(): Collection
     {
-        return $this->types;
+        return $this->portsCompatibles;
     }
 
     public function addType(Port $type): static
     {
-        if (!$this->types->contains($type)) {
-            $this->types->add($type);
+        if (!$this->portsCompatibles->contains($type)) {
+            $this->portsCompatibles->add($type);
             $type->addType($this);
         }
 
@@ -123,7 +125,7 @@ class AisShipType
 
     public function removeType(Port $type): static
     {
-        if ($this->types->removeElement($type)) {
+        if ($this->portsCompatibles->removeElement($type)) {
             $type->removeType($this);
         }
 

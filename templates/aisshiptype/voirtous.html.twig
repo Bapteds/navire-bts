@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ship Types{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <table class="table table-hover">
+            <thead >
+                <tr>
+                    <th scope="col" style="width: 100px">Type</th>
+                    <th scope="col" >Libelle</th>
+                    <th scope="col" >Actions</th>
+                </tr>
+            <thead>
+            <tbody>
+                {% for type in aisShipTypes %}
+                    <tr class="table-primary">
+                        <td scope="row">{{ type.aisshiptype }}</td>
+                        <td scope="row">{{ type.libelle }}</td>
+                        <td scopre="row"><a href="{{ path('aisshiptype.portscompatibles',{id: type.id})}}">Port compatible</a></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}
